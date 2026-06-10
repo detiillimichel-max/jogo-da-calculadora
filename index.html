@@ -2,13 +2,12 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ninja dos Números - O Jogo</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
-        <!-- Placar e Status Superior -->
         <div class="hud">
             <div class="hud-item">⭐ <span id="score">0</span></div>
             <div class="hud-item">❤️ <span id="lives">3</span>/3</div>
@@ -16,12 +15,9 @@
             <button class="btn-shop" onclick="toggleShop(true)">🛒 Loja</button>
         </div>
 
-        <!-- Tela Principal de Queda dos Números -->
         <div class="game-screen" id="game-screen">
-            <!-- Os blocos caindo serão gerados aqui via JS -->
-        </div>
+            </div>
 
-        <!-- Painel de Entrada e Teclado Virtual -->
         <div class="input-container">
             <div class="display-row">
                 <div class="calc-display" id="calc-display">?</div>
@@ -32,7 +28,7 @@
                 <button class="key" onclick="pressKey('1')">1</button>
                 <button class="key" onclick="pressKey('2')">2</button>
                 <button class="key" onclick="pressKey('3')">3</button>
-                <button class="key" onclick="pressKey('4')">4</button>
+                <button class="key" onclick="pressKey('4') text">4</button>
                 <button class="key" onclick="pressKey('5')">5</button>
                 <button class="key" onclick="pressKey('6')">6</button>
                 <button class="key" onclick="pressKey('7')">7</button>
@@ -45,8 +41,7 @@
         </div>
     </div>
 
-    <!-- Modal da Loja Ninja -->
-    <div class="shop-modal" id="shop-modal">
+    <div class="shop-modal" id="shop-modal" style="display: none;">
         <div class="shop-content">
             <h2>🥷 Loja Ninja</h2>
             <p>Use suas estrelas (⭐) para comprar vantagens!</p>
