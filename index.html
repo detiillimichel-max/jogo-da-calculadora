@@ -3,43 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Ninja</title>
+    <title>Ninja dos Números - O Jogo</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="ninja-container">
-        <div class="screen-container">
-            <div id="operation" class="screen-operation"></div>
-            <div id="result" class="screen-result">0</div>
+    <div class="game-container">
+        <!-- Placar e Status Superior -->
+        <div class="hud">
+            <div class="hud-item">⭐ <span id="score">0</span></div>
+            <div class="hud-item">❤️ <span id="lives">3</span>/3</div>
+            <div class="hud-item"><span id="phase-display">Fase 1</span></div>
+            <button class="btn-shop" onclick="toggleShop(true)">🛒 Loja</button>
         </div>
-        
-        <div class="keypad">
-            <button class="btn btn-clear" onclick="clearScreen()">C</button>
-            <button class="btn btn-operator" onclick="appendOperator('/')">/</button>
-            <button class="btn btn-operator" onclick="appendOperator('*')">×</button>
-            <button class="btn btn-operator" onclick="deleteLast()">⌫</button>
 
-            <button class="btn" onclick="appendNumber('7')">7</button>
-            <button class="btn" onclick="appendNumber('8')">8</button>
-            <button class="btn" onclick="appendNumber('9')">9</button>
-            <button class="btn btn-operator" onclick="appendOperator('-')">-</button>
+        <!-- Tela Principal de Queda dos Números -->
+        <div class="game-screen" id="game-screen">
+            <!-- Os blocos caindo serão gerados aqui via JS -->
+        </div>
 
-            <button class="btn" onclick="appendNumber('4')">4</button>
-            <button class="btn" onclick="appendNumber('5')">5</button>
-            <button class="btn" onclick="appendNumber('6')">6</button>
-            <button class="btn btn-operator" onclick="appendOperator('+')">+</button>
+        <!-- Painel de Entrada e Teclado Virtual -->
+        <div class="input-container">
+            <div class="display-row">
+                <div class="calc-display" id="calc-display">?</div>
+                <button class="btn-check" onclick="checkAnswer()">✓</button>
+            </div>
+            
+            <div class="keyboard">
+                <button class="key" onclick="pressKey('1')">1</button>
+                <button class="key" onclick="pressKey('2')">2</button>
+                <button class="key" onclick="pressKey('3')">3</button>
+                <button class="key" onclick="pressKey('4')">4</button>
+                <button class="key" onclick="pressKey('5')">5</button>
+                <button class="key" onclick="pressKey('6')">6</button>
+                <button class="key" onclick="pressKey('7')">7</button>
+                <button class="key" onclick="pressKey('8')">8</button>
+                <button class="key" onclick="pressKey('9')">9</button>
+                <button class="key btn-clear" onclick="pressKey('C')">C</button>
+                <button class="key" onclick="pressKey('0')">0</button>
+                <button class="key btn-clear" onclick="pressKey('BACK')">⌫</button>
+            </div>
+        </div>
+    </div>
 
-            <button class="btn" onclick="appendNumber('1')">1</button>
-            <button class="btn" onclick="appendNumber('2')">2</button>
-            <button class="btn" onclick="appendNumber('3')">3</button>
-            <button class="btn btn-equal" onclick="calculate()">=</button>
-
-            <button class="btn btn-zero" onclick="appendNumber('0')">0</button>
-            <button class="btn" onclick="appendNumber('.')">.</button>
+    <!-- Modal da Loja Ninja -->
+    <div class="shop-modal" id="shop-modal">
+        <div class="shop-content">
+            <h2>🥷 Loja Ninja</h2>
+            <p>Use suas estrelas (⭐) para comprar vantagens!</p>
+            <hr>
+            <div class="shop-item">
+                <span>❤️ Comprar 1 Vida (Máx 3)</span>
+                <button onclick="buyLife()">Preço: 15 ⭐</button>
+            </div>
+            <button class="btn-close-shop" onclick="toggleShop(false)">Fechar Loja</button>
         </div>
     </div>
 
     <script src="script.js"></script>
 </body>
 </html>
-
