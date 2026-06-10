@@ -1,0 +1,111 @@
+:root {
+    --bg-color: #1a1a1a;
+    --calc-bg: #0d0d0d;
+    --screen-bg: #262626;
+    --text-primary: #ffffff;
+    --ninja-red: #dc2626;
+    --ninja-red-hover: #b91c1c;
+    --btn-bg: #333333;
+    --btn-hover: #404040;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.ninja-container {
+    background-color: var(--calc-bg);
+    width: 350px;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 15px var(--ninja-red);
+    border: 2px solid var(--ninja-red);
+}
+
+.screen-container {
+    background-color: var(--screen-bg);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: right;
+    margin-bottom: 25px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    word-break: break-all;
+    border-left: 4px solid var(--ninja-red);
+}
+
+.screen-operation {
+    color: #8c8c8c;
+    font-size: 1.1rem;
+    min-height: 1.5rem;
+}
+
+.screen-result {
+    color: var(--text-primary);
+    font-size: 2.5rem;
+    font-weight: bold;
+    transition: all 0.1s ease;
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.btn {
+    background-color: var(--btn-bg);
+    color: var(--text-primary);
+    border: none;
+    padding: 18px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    background-color: var(--btn-hover);
+    transform: scale(1.05);
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn-operator {
+    color: var(--ninja-red);
+}
+
+.btn-clear {
+    color: #eab308;
+}
+
+.btn-equal {
+    background-color: var(--ninja-red);
+    grid-row: span 2;
+    height: 100%;
+}
+
+.btn-equal:hover {
+    background-color: var(--ninja-red-hover);
+}
+
+.btn-zero {
+    grid-column: span 2;
+}
