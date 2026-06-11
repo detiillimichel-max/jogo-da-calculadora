@@ -17,19 +17,30 @@ const displayEl = document.getElementById('calc-display');
 const gameScreen = document.getElementById('game-screen');
 const shopModal = document.getElementById('shop-modal');
 
-// Configurações das 10 Fases Iniciais (Matemática Educativa)
-const phaseSettings = {
-    1: { min: 1, max: 5, speed: 1.2, op: '+' },
-    2: { min: 1, max: 10, speed: 1.5, op: '+' },
-    3: { min: 5, max: 12, speed: 1.7, op: '-' },
-    4: { min: 10, max: 20, speed: 1.9, op: '-' },
-    5: { min: 2, max: 5, speed: 1.8, op: '*' },
-    6: { min: 10, max: 25, speed: 2.1, op: '+' },
-    7: { min: 15, max: 35, speed: 2.3, op: '-' },
-    8: { min: 3, max: 7, speed: 2.4, op: '*' },
-    9: { min: 20, max: 45, speed: 2.6, op: '+' },
-    10: { min: 25, max: 60, speed: 2.8, op: '-' }
-};
+// ==========================================
+// CONFIGURAÇÃO COMPLETA DE FASES (1 ATÉ 20+)
+// ==========================================
+function getPhaseSettings(phase) {
+    if (phase <= 3) {
+        // Fases 1 a 3: Soma e Subtração de números baixos
+        return { min: 1, max: 9, speed: 1.0 + (phase * 0.15), ops: ['+', '-'] };
+    } else if (phase <= 5) {
+        // Fases 4 e 5: Soma, Subtração, Vezes e Dividir (números baixos)
+        return { min: 2, max: 9, speed: 1.4 + (phase * 0.1), ops: ['+', '-', '*', '/'] };
+    } else if (phase <= 10) {
+        // Fases 6 a 10: Números maiores
+        return { min: 10, max: 30, speed: 1.8 + (phase * 0.08), ops: ['+', '-', '*', '/'] };
+    } else if (phase <= 15) {
+        // Fases 11 a 15: Números bem maiores
+        return { min: 25, max: 70, speed: 2.2 + (phase * 0.05), ops: ['+', '-', '*', '/'] };
+    } else if (phase <= 20) {
+        // Fases 16 a 20: Desafio Ninja Avançado
+        return { min: 50, max: 120, speed: 2.5 + (phase * 0.04), ops: ['+', '-', '*', '/'] };
+    } else {
+        // Modo Infinito (Pós Fase 20): Pequenas mudanças e evolução contínua
+        return { min: 60 + phase, max: 130 + (phase * 2), speed: 3.3, ops: ['+', '-', '*', '/'] };
+    }
+}
 
 // ==========================================
 // MOTORES PRINCIPAIS (INICIALIZAÇÃO)
@@ -39,7 +50,6 @@ function startGame() {
     activeBlocks.forEach(b => b.element.remove());
     activeBlocks = [];
     
-    // Pequeno atraso para garantir o carregamento do layout mobile
     setTimeout(() => {
         spawnBlock();
     }, 1000);
@@ -48,47 +58,51 @@ function startGame() {
 function spawnBlock() {
     if (lives <= 0) return;
 
-    let min, max, speed, op;
+    const settings = getPhaseSettings(currentPhase);
+    const op = settings.ops[Math.floor(Math.random() * settings.ops.length)];
+    
+    let num1, num2, answer;
+    let questionText = "";
 
-    if (!isInfiniteMode) {
-        const settings = phaseSettings[currentPhase] || phaseSettings[1];
-        min = settings.min;
-        max = settings.max;
-        speed = settings.speed;
-        op = settings.op;
+    // Geração Inteligente baseada na Operação Sorteada
+    if (op === '/') {
+        // Garante divisão exata sem quebrar números: (Resultado * Divisor = Dividendo)
+        let maxResult = settings.phase <= 5 ? 5 : 10;
+        let divisor = Math.floor(Math.random() * (settings.max - settings.min + 1)) + settings.min;
+        let simulatedResult = Math.floor(Math.random() * maxResult) + 2;
+        
+        num1 = divisor * simulatedResult;
+        num2 = divisor;
+        answer = simulatedResult;
+        questionText = `${num1}÷${num2}`;
+    } else if (op === '*') {
+        // Simplifica a multiplicação para tabuadas aceitáveis por crianças
+        num1 = Math.floor(Math.random() * (settings.max > 12 ? 10 : settings.max - settings.min + 1)) + settings.min;
+        num2 = Math.floor(Math.random() * 9) + 2;
+        answer = num1 * num2;
+        questionText = `${num1}×${num2}`;
     } else {
-        // Modo Infinito (Pós Fase 10)
-        min = 10 + currentPhase;
-        max = 50 + (currentPhase * 2);
-        speed = 2.8 + (currentPhase * 0.1);
-        const ops = ['+', '-', '*'];
-        op = ops[Math.floor(Math.random() * ops.length)];
+        // Soma e Subtração Padrão
+        num1 = Math.floor(Math.random() * (settings.max - settings.min + 1)) + settings.min;
+        num2 = Math.floor(Math.random() * (settings.max - settings.min + 1)) + settings.min;
+        
+        if (op === '-') {
+            if (num1 < num2) { let temp = num1; num1 = num2; num2 = temp; }
+            answer = num1 - num2;
+            questionText = `${num1}-${num2}`;
+        } else {
+            answer = num1 + num2;
+            questionText = `${num1}+${num2}`;
+        }
     }
 
-    let num1 = Math.floor(Math.random() * (max - min + 1)) + min;
-    let num2 = Math.floor(Math.random() * (max - min + 1)) + min;
-
-    // Evita resultados negativos para manter divertido e educativo
-    if (op === '-' && num1 < num2) {
-        let temp = num1;
-        num1 = num2;
-        num2 = temp;
-    }
-
-    let questionText = `${num1}${op === '*' ? '×' : op}${num2}`;
-    let answer = 0;
-    if (op === '+') answer = num1 + num2;
-    if (op === '-') answer = num1 - num2;
-    if (op === '*') answer = num1 * num2;
-
-    // Criar o bloco visualmente
+    // Criar elemento visual do bloco na tela
     const blockEl = document.createElement('div');
     blockEl.className = 'falling-block';
     blockEl.textContent = questionText;
     
     gameScreen.appendChild(blockEl);
 
-    // Ajuste de largura para telas mobile
     let maxLeft = gameScreen.clientWidth - blockEl.clientWidth - 15;
     if (maxLeft < 0) maxLeft = 10;
     let randomLeft = Math.floor(Math.random() * maxLeft);
@@ -100,17 +114,16 @@ function spawnBlock() {
         element: blockEl,
         answer: answer,
         top: 0,
-        speed: speed
+        speed: settings.speed
     };
 
     activeBlocks.push(blockObj);
 
-    // Tempo de surgimento do próximo bloco
-    let nextSpawnTime = Math.max(1800, 4500 - (currentPhase * 250));
+    // Ajuste dinâmico do tempo de spawn baseado na fase
+    let nextSpawnTime = Math.max(1500, 4800 - (currentPhase * 200));
     gameInterval = setTimeout(spawnBlock, nextSpawnTime);
 }
 
-// Loop de Atualização de Quadros (Queda dos blocos)
 function updateGame() {
     if (lives <= 0) return;
 
@@ -119,7 +132,6 @@ function updateGame() {
         block.top += block.speed;
         block.element.style.top = `${block.top}px`;
 
-        // Se passar do limite da linha tracejada vermelha
         if (block.top >= gameScreen.clientHeight - block.element.clientHeight) {
             block.element.remove();
             activeBlocks.splice(i, 1);
@@ -130,7 +142,7 @@ function updateGame() {
 }
 
 // ==========================================
-// CONTROLES E ENTRADAS DO JOGADOR
+// CONTROLES E DIGITAÇÃO (DESTRAVADO)
 // ==========================================
 function pressKey(key) {
     if (key === 'C') {
@@ -138,7 +150,7 @@ function pressKey(key) {
     } else if (key === 'BACK') {
         currentAnswer = currentAnswer.slice(0, -1);
     } else {
-        if (currentAnswer.length < 5) {
+        if (currentAnswer.length < 6) {
             currentAnswer += key;
         }
     }
@@ -152,7 +164,6 @@ function checkAnswer() {
     let foundIndex = activeBlocks.findIndex(b => b.answer === playerNum);
 
     if (foundIndex !== -1) {
-        // Acertou o alvo ninja!
         activeBlocks[foundIndex].element.remove();
         activeBlocks.splice(foundIndex, 1);
         
@@ -164,19 +175,18 @@ function checkAnswer() {
 
         checkPhaseProgress();
     } else {
-        // Se errar, limpa o painel para digitação rápida
         currentAnswer = "";
         displayEl.textContent = "?";
     }
 }
 
 function checkPhaseProgress() {
-    // Avança de fase a cada 30 pontos (6 acertos)
+    // Avança de fase a cada 30 pontos acumulados
     let targetPhase = Math.floor(score / 30) + 1;
     
     if (targetPhase > currentPhase) {
         currentPhase = targetPhase;
-        if (currentPhase <= 10) {
+        if (currentPhase <= 20) {
             phaseEl.textContent = `Fase ${currentPhase}`;
         } else {
             isInfiniteMode = true;
@@ -189,13 +199,13 @@ function loseLife() {
     lives--;
     livesEl.textContent = `${lives}/3`;
     if (lives <= 0) {
-        alert(`Fim de Jogo! 🥷\nVocê alcançou a ${phaseEl.textContent} e coletou ${score} estrelas!`);
+        alert(`Fim de Jogo! 🥷\nVocê chegou à ${phaseEl.textContent} e acumulou ${score} moedas!`);
         resetGame();
     }
 }
 
 // ==========================================
-// SISTEMA DA LOJA NINJA
+// LOJA VIRTUAL NINJA
 // ==========================================
 function toggleShop(open) {
     shopModal.style.display = open ? 'flex' : 'none';
@@ -208,12 +218,12 @@ function buyLife() {
             lives++;
             scoreEl.textContent = score;
             livesEl.textContent = `${lives}/3`;
-            alert("Vida restaurada com sucesso! ❤️");
+            alert("Comprou 1 Vida Extra! ❤️");
         } else {
-            alert("Sua vida já está no limite máximo (3/3)!");
+            alert("Suas vidas já estão cheias!");
         }
     } else {
-        alert("Estrelas insuficientes! Junte 15 ⭐ para comprar.");
+        alert("Precisa de 15 moedas ⭐ para comprar vida.");
     }
 }
 
@@ -230,9 +240,7 @@ function resetGame() {
     startGame();
 }
 
-// Inicialização automática do Jogo
 window.onload = () => {
     startGame();
     requestAnimationFrame(updateGame);
 };
-         
